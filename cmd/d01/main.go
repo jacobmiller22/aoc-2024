@@ -41,10 +41,10 @@ func main() {
 	}
 
 	if err != nil {
-		log.Fatalf("Error occurred while running part %d: %v", part, err)
+		log.Fatalf("Error occurred while running part %d: %v", *part, err)
 	}
 
-	log.Printf("Part %d Answer is: %d", part, result)
+	log.Printf("Part %d Answer is: %d", *part, result)
 }
 
 func part1(scanner *bufio.Scanner) (int, error) {
