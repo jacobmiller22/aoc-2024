@@ -44,11 +44,6 @@ func main() {
 	log.Printf("Part 1: %d :==: Part 2: %d\n", p1, p2)
 }
 
-type Marking struct {
-	kind rune
-	y    int
-}
-
 func scanMap(f io.Reader) (*board, *coordinate, error) {
 	scr := bufio.NewScanner(f)
 
