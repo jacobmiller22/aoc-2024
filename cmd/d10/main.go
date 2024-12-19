@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/jacobmiller22/aoc-2024/grid"
@@ -65,6 +66,50 @@ func visualize(M *[]string, x, y int, t byte, visited *grid.Grid) {
 		w.WriteString("\n")
 	}
 	fmt.Print(w.String())
+}
+
+func dfsIterative(M *[]string, x, y int, visited *grid.Grid) int {
+	stack := make([]grid.Coordinate, 0, 0)
+	stack = append(stack, *grid.NewCoordinate(x, y))
+
+	sum := 0
+
+	for len(stack) > 0 {
+		// Pop stack
+		s := stack[len(stack)-1]
+		stack = slices.Delete(stack, len(stack)-1, len(stack))
+		r, c := s.X(), s.Y()
+		v := (*M)[r][c] // Value of current node
+
+		// visualize(M, r, c, v, visited)
+		if !visited.Has(r, c) {
+			if v == '9' {
+				sum++
+			}
+			visited.Mark(r, c)
+		}
+
+		// push unvisted adjencent steps to stack
+		if r-1 >= 0 && (*M)[r-1][c] == v+1 {
+			stack = append(stack, *grid.NewCoordinate(r-1, c))
+		}
+
+		// down
+		if r < len(*M)-1 && (*M)[r+1][c] == v+1 {
+			stack = append(stack, *grid.NewCoordinate(r+1, c))
+		}
+
+		// left
+		if c-1 >= 0 && (*M)[r][c-1] == v+1 {
+			stack = append(stack, *grid.NewCoordinate(r, c-1))
+		}
+
+		// right
+		if c < len((*M)[0])-1 && (*M)[r][c+1] == v+1 {
+			stack = append(stack, *grid.NewCoordinate(r, c+1))
+		}
+	}
+	return sum
 }
 
 func dfs(M *[]string, r, c int, t byte, visited *grid.Grid) int {
@@ -132,8 +177,10 @@ func solution(f io.Reader) (int, int, error) {
 				visited := grid.NewGrid()
 				visited.SetWidth(len(M[0]))
 				visited.SetHeight(len(M))
-				sum1 += dfs(&M, r, c, '0', visited)
+				// sum1 += dfs(&M, r, c, '0', visited)
+				sum1 += dfsIterative(&M, r, c, visited)
 				sum2 += dfs(&M, r, c, '0', nil)
+
 			}
 		}
 	}
